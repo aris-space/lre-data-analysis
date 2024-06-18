@@ -1,5 +1,8 @@
 # Python virtual environment
 .venv/
 
+# Python cache
+helios_data_analysis/__pycache__/
+
 # Generated plots
 *.html
