@@ -19,7 +19,7 @@ with DatabaseInstance() as db:
 
     print("Which plotting configuration would you like to have for all IDs?")
     print(
-        "Press 1 for Firing, press 2 for CF FSS, press 3 for CF with LOX, press 4 for Ignition"
+        "Press 1 for Firing, press 2 for CF FSS, press 3 for CF with LOX, press 4 for Ignition, press 5 for Efficiency"
     )
     config_opt = int(input("Enter configuration: "))
     print("You have chosen configuration:", config_opt)
@@ -868,8 +868,289 @@ with DatabaseInstance() as db:
                     i += 1    
             fig7.write_html(filepath)
 
-        if config_opt == 5:
-            print("Efficiency")
+        # Efficiency plots
+        if config_opt == 5 or 1:
+            print("You have chosen to plot the Efficiency plots, good luck, lets hope nothing crashes :)")
+
+            print(
+                "--------------------------------------------------------------------------------------"
+            )
+
+            print(
+                "For the sake of doing it, the cool way, you can chose the Engine assembly now"
+                )
+            
+            print(
+                "\nPress 1 for L6, press 2 for L7, press 3 for L8"
+            )
+            effic_opt = int(input("Enter configuration: "))
+            print("You have chosen configuration:", effic_opt)
+            print(
+                    "--------------------------------------------------------------------------------------"
+            )
+            # we will use 8 to index the Efficiency thingy of L6
+            # we will use 9 to index the Efficienct thingy of L7
+            # we will use 10 to index the Efficienct thingy of L8
+
+            if effic_opt == 1 or 2 or 3:
+                print("Efficiency plot")
+                #       i =    0    ,    1  ,     2   ,     3   ,     4  ,    5
+                sensors8 = [
+                    "eng_lc",   # 0
+                    "cc_p",     # 1
+                    "oss_mf",   # 2
+                    "fss_mf",   # 3
+                    "inj_p",    # 4
+                    "rnl_oss_p" # 5
+                    ]
+                sensors_n8 = [
+                        "Thrust", 
+                        "Combustion Chamber Pressure", 
+                        "OSS Mass Flow", 
+                        "FSS Mass Flow", 
+                        "Injector Manifold Pressure", 
+                        "OSS Run Line Pressure"
+                ]
+                yaxis8 = ["Discharge coefficient * 1000 lsp[s]", "Characteristic velocity [m/s]"]
+
+                analysis8 = Analysis_Instance(db, config_ids, sensors8, yaxis8)
+                print(analysis8.event_list)
+                print(analysis8.firing_starts[id])    
+
+                start8 = analysis8.starts[id]
+                end8 = analysis8.ends[id]
+
+                date_string8 = str(analysis8.dates[id]).replace(":", "-")
+
+                fig8 = make_subplots(specs=[[{"secondary_y" : True}]])
+
+                # hardcoded lesgo
+                #
+                # left axis:
+                # lsp: eng_lc/(9.81*(oss_mf*fss_mf))
+                # 
+                sensor_name[0] = analysis8.sensors[0]
+                sensor_name[1] = analysis8.sensors[1]
+                sensor_name[2] = analysis8.sensors[2]
+                sensor_name[3] = analysis8.sensors[3]
+                sensor_name[4] = analysis8.sensors[4]
+                sensor_name[5] = analysis8.sensors[5]
+
+                sensor_0 = analysis8.sensors_values[id][0] #eng_lc
+                sensor_1 = analysis8.sensors_values[id][1] #cc_p
+                sensor_2 = analysis8.sensors_values[id][2] #oss_mf
+                sensor_3 = analysis8.sensors_values[id][3] #fss_mf
+                sensor_4 = analysis8.sensors_values[id][4] #inj_p
+                sensor_5 = analysis8.sensors_values[id][5] #rnl_oss_p
+                
+                values0 = analysis8.sensors_values[id][sensor_0]
+                values1 = analysis8.sensors_values[id][sensor_1]
+                values2 = analysis8.sensors_values[id][sensor_2]
+                values3 = analysis8.sensors_values[id][sensor_3]
+                values4 = analysis8.sensors_values[id][sensor_4]
+                values5 = analysis8.sensors_values[id][sensor_5]
+
+                sensor_cut0 = values0[(values0["timestamp"] >= start8) & (values0["timestamp"] <= end8)]
+                sensor_cut0["time"] = pd.to_datetime(sensor_cut0["timestamp"] + 3600 * 2, unit="s")
+                sensor_cut0["time_relative"] = sensor_cut0["timestamp"] - start8
+
+                sensor_cut1 = values1[(values1["timestamp"] >= start8) & (values1["timestamp"] <= end8)]
+                sensor_cut1["time"] = pd.to_datetime(sensor_cut1["timestamp"] + 3600 * 2, unit="s")
+                sensor_cut1["time_relative"] = sensor_cut1["timestamp"] - start8
+
+                sensor_cut2 = values2[(values2["timestamp"] >= start8) & (values2["timestamp"] <= end8)]
+                sensor_cut2["time"] = pd.to_datetime(sensor_cut2["timestamp"] + 3600 * 2, unit="s")
+                sensor_cut2["time_relative"] = sensor_cut2["timestamp"] - start8
+
+                sensor_cut3 = values3[(values3["timestamp"] >= start8) & (values3["timestamp"] <= end8)]
+                sensor_cut3["time"] = pd.to_datetime(sensor_cut3["timestamp"] + 3600 * 2, unit="s")
+                sensor_cut3["time_relative"] = sensor_cut3["timestamp"] - start8
+
+                sensor_cut4 = values4[(values4["timestamp"] >= start8) & (values4["timestamp"] <= end8)]
+                sensor_cut4["time"] = pd.to_datetime(sensor_cut4["timestamp"] + 3600 * 2, unit="s")
+                sensor_cut4["time_relative"] = sensor_cut4["timestamp"] - start8
+
+                sensor_cut5 = values5[(values5["timestamp"] >= start8) & (values5["timestamp"] <= end8)]
+                sensor_cut5["time"] = pd.to_datetime(sensor_cut5["timestamp"] + 3600 * 2, unit="s")
+                sensor_cut5["time_relative"] = sensor_cut5["timestamp"] - start8
+
+                # lsp: eng_lc/(9.81*(oss_mf*fss_mf))
+                #       0              2      3
+                fig8.add_trace(
+                    go.Scatter(
+                        x = sensor_cut0["time"],
+                        y = sensor_cut0["value"].rolling(30).mean() / 
+                                (9.81 * sensor_cut2["value"].rolling(30).mean() * sensor_cut3["value"].rolling(30).mean()),
+                        name = "lsp",
+                    ),
+                    secondary_y = False,
+                )
+
+                # right axis
+                # char_vel: cc_p*176,71*10^-6 /(fss_mf+oss_mf)
+                #            1                   3       2
+                fig8.add_trace(
+                    go.Scatter(
+                        x = sensor_cut1["time"],
+                        y = sensor_cut1["value"].rolling(30).mean() * 176.71 * 10**-6 / 
+                                (sensor_cut2["value"].rolling(30).mean() + sensor_cut3["value"].rolling(30).mean()),
+                        name = "char_vel",
+                    ),
+                    secondary_y = True,
+                )
+                if effic_opt == 1:
+                    print("Efficiency plot for L6\n")
+                    # left axis
+                    # FI_cd_fss_L6: fss_mf/(3.3929*10^-6*2*789*(inj_p-cc_p))^0.5
+        #                              3                         4      1
+                    fig8.add_trace(
+                        go.Scatter(
+                            x = sensor_cut3["time"],
+                            y = sensor_cut3["value"].rolling(30).mean() / 
+                                ((3.3929 * 10**-6) * 2 * 789 * 
+                                (sensor_cut4["value"].rolling(30).mean() - sensor_cut1["value"].rolling(30).mean()))**0.5,
+                            name = "FI_cd_fss_L6",
+                        ),
+                        secondary_y = False,
+                    )
+                    # FI_cd_oss_L6: oss_mf/(6.9318*10^-6*2*1175*(rnl_oss_p-cc_p))^0.
+                    #                  2                           5         1
+                    fig8.add_trace(
+                        go.Scatter(
+                            x = sensor_cut2["time"],
+                            y = sensor_cut2["value"].rolling(30).mean() / 
+                                (6.9318 * 10**-6 * 2 * 1175 * 
+                                (sensor_cut5["value"].rolling(30).mean() - sensor_cut1["value"].rolling(30).mean()))**0.5,
+                            name = "FI_cd_oss_L6",
+                        ),
+                        secondary_y = False,
+                    )
+                elif effic_opt == 2:
+                    print("Efficiency plot for L7\n")
+                    # left axis
+                # FI_cd_fss_L7: fss_mf/(4.7123*10^-6*2*789*(inj_p-cc_p))^0.5#
+                #                   3                         4      1
+                    fig8.add_trace(
+                        go.Scatter(
+                            x = sensor_cut3["time"],
+                            y = sensor_cut3["value"].rolling(30).mean() / 
+                                ((4.7123 * 10**-6) * 2 * 789 * 
+                                (sensor_cut4["value"].rolling(30).mean() - sensor_cut1["value"].rolling(30).mean()))**0.5,
+                            name = "FI_cd_fss_L7",
+                        ),
+                        secondary_y = False,
+                    )
+                # FI_cd_oss_L7: oss_mf/(6.7858*10^-6*2*1175*(rnl_oss_p-cc_p))^0.5
+                #                  2                           5         1
+                    fig8.add_trace(
+                        go.Scatter(
+                            x = sensor_cut2["time"],
+                            y = sensor_cut2["value"].rolling(30).mean() / 
+                                (6.7858 * 10**-6 * 2 * 1175 * 
+                                (sensor_cut5["value"].rolling(30).mean() - sensor_cut1["value"].rolling(30).mean()))**0.5,
+                            name = "FI_cd_oss_L6",
+                        ),
+                        secondary_y = False,
+                    )
+                elif effic_opt == 3:
+                    print("Efficiency plot for L8\n")
+                    # left axis
+                # FI_cd_fss_L8: fss_mf/(3.0159*10^-6*2*789*(inj_p-cc_p))^0.5
+                #                   3                         4      1
+                    fig8.add_trace(
+                        go.Scatter(
+                            x = sensor_cut3["time"],
+                            y = sensor_cut3["value"].rolling(30).mean() / 
+                                ((3.0159 * 10**-6) * 2 * 789 * 
+                                (sensor_cut4["value"].rolling(30).mean() - sensor_cut1["value"].rolling(30).mean()))**0.5,
+                            name = "FI_cd_fss_L8",
+                        ),
+                        secondary_y = False,
+                    )
+                # FI_cd_oss_L8: oss_mf/(4.2529*10^-6*2*1175*(rnl_oss_p-cc_p))^0.5
+                #                  2                           5         1
+                    fig8.add_trace(
+                        go.Scatter(
+                            x = sensor_cut2["time"],
+                            y = sensor_cut2["value"].rolling(30).mean() / 
+                                (4.2529 * 10**-6 * 2 * 1175 * 
+                                (sensor_cut5["value"].rolling(30).mean() - sensor_cut1["value"].rolling(30).mean()))**0.5,
+                            name = "FI_cd_oss_L8",
+                        ),
+                        secondary_y = False,
+                    )
+                else:
+                    print("No option for efficiency plot found\n")
+
+
+                for i, event in enumerate(analysis8.event_list[id]):
+
+                    if isinstance(event, list):
+                        if len(event) == 0: 
+                            print("empty")
+                    else:
+                        if isinstance(event, list):
+                            event = event[0]
+                        event_name = analysis8.event_names[id][i]
+                        if event - start8 >= 0 and event - end8 <= 0:
+                            x = pd.to_datetime(event, unit="s")
+                            x = event * 1000
+                            # fig.add_vline(x=event-start, line_width=1, line_dash="dash", line_color="white", annotation_text = event_name)
+                            fig8.add_vline(
+                                x=x,
+                                line_width=1,
+                                line_dash="dash",
+                                line_color="white",
+                                annotation_text=event_name,
+                            )
+                            # fig.add_annotation(yref= 'y domain',x=x, y=0.95-(i%15)*0.05, text=event_name)
+
+                y = []
+                for i, a in enumerate(fig8.to_dict()["layout"]["annotations"]):
+                    y.append([a, 0.95 - (i % 15) * 0.05])
+                if effic_opt == 1:
+                    fig8.update_layout(
+                        annotations=[{**element[0], **{"y": element[1]}} for element in y],
+                        title=f"{date_string8}: Eifficiency L6: {id} ",
+                    )
+                elif effic_opt == 2:
+                    fig8.update_layout(
+                        annotations=[{**element[0], **{"y": element[1]}} for element in y],
+                        title=f"{date_string8}: Efficiency L7: {id} ",
+                    ) 
+                elif effic_opt == 3:
+                    fig8.update_layout(
+                        annotations=[{**element[0], **{"y": element[1]}} for element in y],
+                        title=f"{date_string8}: Efficiency L8: {id} ",
+                    ) 
+                fig8.update_yaxes(title_text=yaxis8[0], secondary_y=False)
+                fig8.update_yaxes(title_text=yaxis8[1], secondary_y=True)
+                # fig.update_yaxes(title_text = yaxis[0])
+                fig8.show()
+                if effic_opt == 1:
+                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string8}_{id}_efficiency-L6.html"
+                    i = 0
+                    while os.path.exists(filepath):
+                        filepath = f"/home/dacs/git/data-management/database_pro/{date_string8}_{id}_efficiency-L6_{i}.html"
+                        i += 1
+                elif effic_opt == 2:
+                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string8}_{id}_efficiency-L7.html"
+                    i = 0
+                    while os.path.exists(filepath):
+                        filepath = f"/home/dacs/git/data-management/database_pro/{date_string8}_{id}_efficiency-L7_{i}.html"
+                        i += 1   
+                elif effic_opt == 3:
+                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string8}_{id}_efficiency-L8.html"
+                    i = 0
+                    while os.path.exists(filepath):
+                        filepath = f"/home/dacs/git/data-management/database_pro/{date_string8}_{id}_efficiency-L8_{i}.html"
+                        i += 1
+                else:
+                    print("No valid configuration for the Efficiency plot was picked. \n ERROR CODE 51")  
+                     
+                fig8.write_html(filepath)
+
+
         else:
             print("configuration not recognized")
 
