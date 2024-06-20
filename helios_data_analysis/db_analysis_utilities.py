@@ -13,7 +13,8 @@ import plotly.io as pio
 pio.renderers.default = "browser"
 import mysql.connector as con
 import os.path
-
+import json
+import sys
 
 class DatabaseInstance():
 
@@ -33,11 +34,21 @@ class DatabaseInstance():
          self.connection.close()
 
     def establishConnection(self):
+
+        # Load database credentials from JSON file
+        try:
+            with open("credentials.json", "r") as file:
+                credentials = json.load(file)
+        except FileNotFoundError:
+            print("`credentials.json` not found! Make sure you have the credentials from the wiki saved in a JSON file called `credentials.json`")
+            print("https://wiki.aris-space.ch/en/rocketry/engines/liquid/test-bench/data-acquisition-and-control-system/Subsystems/Software/Credentials")
+            sys.exit(1)
+
         dbConnection = con.connect(
-            host=self.hostip,
-            user="root",
-            password="aris",
-            database="dacs"        
+            host=credentials["host"],
+            user=credentials["user"],
+            password=credentials["password"],
+            database=credentials["database"] 
         )
         dbCursor = dbConnection.cursor(buffered=True, dictionary=True)
         return dbConnection, dbCursor
