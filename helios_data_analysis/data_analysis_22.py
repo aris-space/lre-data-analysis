@@ -4,6 +4,7 @@ from analysis_functions import *
 from db_analysis_utilities import *
 from analysis_functions import *
 
+GLOBAL_PLOT_FILE_PREFIX = "/home/dacs/git/data-management/database_pro/"
 
 with DatabaseInstance() as db:
     id_input = input("Please enter all config IDs separated by spaces: ")
@@ -136,12 +137,12 @@ with DatabaseInstance() as db:
             # # fig.update_yaxes(title_text = yaxis[0])
             # fig1.show()
             # filepath = (
-            #     f"/home/dacs/git/data-management/database_pro/simpleplot_{analysis1.dates[id]}.html"
+            #     f"{GLOBAL_PLOT_FILE_PREFIX}simpleplot_{analysis1.dates[id]}.html"
             # )
             # i = 0
             # while os.path.exists(filepath):
             #     filepath = (
-            #         f"/home/dacs/git/data-management/database_pro/simpleplot_{analysis1.dates[id]}_{i}.html"
+            #         f"{GLOBAL_PLOT_FILE_PREFIX}simpleplot_{analysis1.dates[id]}_{i}.html"
             #     )
             #     i = i + 1
             # fig1.write_html(filepath)
@@ -276,16 +277,16 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig2.show()
             if config_opt == 2:
-                filepath = f"/home/dacs/git/data-management/database_pro/{date_string2}_{id}_CF_FSS_p-t.html"
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_CF_FSS_p-t.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string2}_{id}_CF_FSS_p-t_{i}.html"
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_CF_FSS_p-t_{i}.html"
                     i += 1
             elif config_opt == 1:
-                filepath = f"/home/dacs/git/data-management/database_pro/{date_string2}_{id}_FI_fss_p-t.html"
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_FI_fss_p-t.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string2}_{id}_FI_fss_p-t_{i}.html"
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_FI_fss_p-t_{i}.html"
                     i += 1
             fig2.write_html(filepath)
 
@@ -426,16 +427,16 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig3.show()
             if config_opt == 2:
-                filepath = f"/home/dacs/git/data-management/database_pro/{date_string3}_{id}_CF_FSS_p-m-th.html"
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_CF_FSS_p-m-th.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string3}_{id}_CF_FSS_p-m-th_{i}.html"
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_CF_FSS_p-m-th_{i}.html"
                     i += 1
             elif config_opt == 1:
-                filepath = f"/home/dacs/git/data-management/database_pro/{date_string3}_{id}_FI_fss_p-m-th.html"
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_FI_fss_p-m-th.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string3}_{id}_FI_fss_p-m-th_{i}.html"
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_FI_fss_p-m-th_{i}.html"
                     i += 1                
             fig3.write_html(filepath)
 
@@ -571,23 +572,23 @@ with DatabaseInstance() as db:
             fig4.show()
             if config_opt == 3:
                 filepath = (
-                    f"/home/dacs/git/data-management/database_pro/{str(analysis4.dates[id])}_CF_OSS_p-t.html"
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis4.dates[id])}_CF_OSS_p-t.html"
                 )            
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        f"/home/dacs/git/data-management/database_pro/{analysis4.dates[id]}_CF_OSS_p-t_{i}.html"
+                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_CF_OSS_p-t_{i}.html"
                     )
                     i = i + 1
 
             elif config_opt == 1:
                 filepath = (
-                    f"/home/dacs/git/data-management/database_pro/{analysis4.dates[id]}_FI_oss_p-t.html"
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_FI_oss_p-t.html"
                 )   
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        f"/home/dacs/git/data-management/database_pro/{analysis4.dates[id]}_FI_oss_p-t_{i}.html"
+                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_FI_oss_p-t_{i}.html"
                     )
                     i = i + 1
             fig4.write_html(filepath)
@@ -715,22 +716,22 @@ with DatabaseInstance() as db:
             fig5.show()
             if config_opt == 3:
                 filepath = (
-                    f"/home/dacs/git/data-management/database_pro/{str(analysis5.dates[id])}_CF_OSS_p-m-th.html"
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis5.dates[id])}_CF_OSS_p-m-th.html"
                 )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        f"/home/dacs/git/data-management/database_pro/{analysis5.dates[id]}_CF_OSS_p-m-th{i}.html"
+                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_CF_OSS_p-m-th{i}.html"
                     )
                     i = i + 1
             elif config_opt == 1:
                 filepath = (
-                    f"/home/dacs/git/data-management/database_pro/{analysis5.dates[id]}_FI_oss_p-m-th.html"
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_FI_oss_p-m-th.html"
                 )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        f"/home/dacs/git/data-management/database_pro/{analysis5.dates[id]}_FI_oss_p-m-th{i}.html"
+                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_FI_oss_p-m-th{i}.html"
                     )
                     i = i + 1  
             fig5.write_html(filepath)
@@ -845,16 +846,16 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig7.show()
             if config_opt == 4:
-                filepath = f"/home/dacs/git/data-management/database_pro/{date_string7}_{id}_Ignition_p-t.html"
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_Ignition_p-t.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string7}_{id}_Ignition_p-t_{i}.html"
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_Ignition_p-t_{i}.html"
                     i += 1
             elif config_opt == 1:
-                filepath = f"/home/dacs/git/data-management/database_pro/{date_string7}_{id}_FI_ign_p-t.html"
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_FI_ign_p-t.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = f"/home/dacs/git/data-management/database_pro/{date_string7}_{id}_FI_ign_p-t_{i}.html"
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_FI_ign_p-t_{i}.html"
                     i += 1    
             fig7.write_html(filepath)
 
