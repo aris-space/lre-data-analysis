@@ -1,0 +1,7 @@
+# git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Trim trailing whitespaces
+635c6ae8de18f3c8a802401a1f8cc5df5ea93b1e
+
+# Format project with `black`
+2e2df5f6a3761f6eae20815909bcfacfd1f224b2
