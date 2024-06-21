@@ -277,13 +277,17 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig2.show()
             if config_opt == 2:
-                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_CF_FSS_p-t.html"
+                filepath = (
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_CF_FSS_p-t.html"
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_CF_FSS_p-t_{i}.html"
                     i += 1
             elif config_opt == 1:
-                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_FI_fss_p-t.html"
+                filepath = (
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_FI_fss_p-t.html"
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string2}_{id}_FI_fss_p-t_{i}.html"
@@ -311,7 +315,10 @@ with DatabaseInstance() as db:
                 "FSS Mass Flow",
                 "FSS Tank Weight [kg]",
             ]
-            yaxis3 = ["Pressure (barg) & Thrust/10 (N)", "Massflow (g/s) & FSS tank weight (kg)"]
+            yaxis3 = [
+                "Pressure (barg) & Thrust/10 (N)",
+                "Massflow (g/s) & FSS tank weight (kg)",
+            ]
 
             analysis3 = Analysis_Instance(db, config_ids, sensors3, yaxis3)
             print(analysis3.event_list)
@@ -362,7 +369,9 @@ with DatabaseInstance() as db:
                         fig3.add_trace(
                             go.Scatter(
                                 x=sensor_cut["time"],
-                                y=sensor_cut["value"].rolling(30).mean(),  # times 100 because somewhere we apparently divide by 100, removed
+                                y=sensor_cut["value"]
+                                .rolling(30)
+                                .mean(),  # times 100 because somewhere we apparently divide by 100, removed
                                 name=sensors_n3[i],
                             ),
                             secondary_y=True,
@@ -427,20 +436,22 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig3.show()
             if config_opt == 2:
-                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_CF_FSS_p-m-th.html"
+                filepath = (
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_CF_FSS_p-m-th.html"
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_CF_FSS_p-m-th_{i}.html"
                     i += 1
             elif config_opt == 1:
-                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_FI_fss_p-m-th.html"
+                filepath = (
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_FI_fss_p-m-th.html"
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_FI_fss_p-m-th_{i}.html"
                     i += 1
             fig3.write_html(filepath)
-
-
 
         # -----------------------------------------------------------------------------------------------------------------------------------------------------
         # OSS OLD FLOW CONFIGURATION
@@ -571,14 +582,10 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig4.show()
             if config_opt == 3:
-                filepath = (
-                    f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis4.dates[id])}_CF_OSS_p-t.html"
-                )
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis4.dates[id])}_CF_OSS_p-t.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = (
-                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_CF_OSS_p-t_{i}.html"
-                    )
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_CF_OSS_p-t_{i}.html"
                     i = i + 1
 
             elif config_opt == 1:
@@ -587,9 +594,7 @@ with DatabaseInstance() as db:
                 )
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = (
-                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_FI_oss_p-t_{i}.html"
-                    )
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_FI_oss_p-t_{i}.html"
                     i = i + 1
             fig4.write_html(filepath)
 
@@ -715,14 +720,10 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig5.show()
             if config_opt == 3:
-                filepath = (
-                    f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis5.dates[id])}_CF_OSS_p-m-th.html"
-                )
+                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis5.dates[id])}_CF_OSS_p-m-th.html"
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = (
-                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_CF_OSS_p-m-th{i}.html"
-                    )
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_CF_OSS_p-m-th{i}.html"
                     i = i + 1
             elif config_opt == 1:
                 filepath = (
@@ -730,9 +731,7 @@ with DatabaseInstance() as db:
                 )
                 i = 0
                 while os.path.exists(filepath):
-                    filepath = (
-                        f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_FI_oss_p-m-th{i}.html"
-                    )
+                    filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_FI_oss_p-m-th{i}.html"
                     i = i + 1
             fig5.write_html(filepath)
 
@@ -846,13 +845,17 @@ with DatabaseInstance() as db:
             # fig.update_yaxes(title_text = yaxis[0])
             fig7.show()
             if config_opt == 4:
-                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_Ignition_p-t.html"
+                filepath = (
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_Ignition_p-t.html"
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_Ignition_p-t_{i}.html"
                     i += 1
             elif config_opt == 1:
-                filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_FI_ign_p-t.html"
+                filepath = (
+                    f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_FI_ign_p-t.html"
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_FI_ign_p-t_{i}.html"

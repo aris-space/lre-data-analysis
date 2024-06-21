@@ -7,21 +7,24 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import math
 import matplotlib.pyplot as plt
+
 pd.options.plotting.backend = "plotly"
 import plotly.express as px
 import plotly.io as pio
+
 pio.renderers.default = "browser"
 import mysql.connector as con
 import os.path
 import json
 import sys
 
-class DatabaseInstance():
+
+class DatabaseInstance:
 
     ## Basic connection methods
     def __init__(self):
         self.connection = None
-        self.hostip = '127.0.0.1'
+        self.hostip = "127.0.0.1"
         self.cursor = None
         self.tables = None
 
@@ -30,8 +33,8 @@ class DatabaseInstance():
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-         self.cursor.close()
-         self.connection.close()
+        self.cursor.close()
+        self.connection.close()
 
     def establishConnection(self):
 
@@ -40,45 +43,49 @@ class DatabaseInstance():
             with open("credentials.json", "r") as file:
                 credentials = json.load(file)
         except FileNotFoundError:
-            print("`credentials.json` not found! Make sure you have the credentials from the wiki saved in a JSON file called `credentials.json`")
-            print("https://wiki.aris-space.ch/en/rocketry/engines/liquid/test-bench/data-acquisition-and-control-system/Subsystems/Software/Credentials")
+            print(
+                "`credentials.json` not found! Make sure you have the credentials from the wiki saved in a JSON file called `credentials.json`"
+            )
+            print(
+                "https://wiki.aris-space.ch/en/rocketry/engines/liquid/test-bench/data-acquisition-and-control-system/Subsystems/Software/Credentials"
+            )
             sys.exit(1)
 
         dbConnection = con.connect(
             host=credentials["host"],
             user=credentials["user"],
             password=credentials["password"],
-            database=credentials["database"]
+            database=credentials["database"],
         )
         dbCursor = dbConnection.cursor(buffered=True, dictionary=True)
         return dbConnection, dbCursor
 
     def getTables(self):
-        self.cursor.execute('SHOW tables')
+        self.cursor.execute("SHOW tables")
         table_rows = self.cursor.fetchall()
         self.tables = pd.DataFrame(table_rows)
 
     def get_test_date(self, config_id):
         query = f"SELECT date FROM tests WHERE config_id = {config_id}"
         self.cursor.execute(query)
-        return self.cursor.fetchone()['date'].strftime("%m-%d-%Y")
+        return self.cursor.fetchone()["date"].strftime("%m-%d-%Y")
 
     def get_unc(self, sensor, config_id):
         query = f"SELECT unc FROM sensors_meta INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = {config_id} AND name LIKE '{sensor}'"
         self.cursor.execute(query)
         unc = self.cursor.fetchone()
-        return unc['unc']
+        return unc["unc"]
 
     def get_unc_type(self, sensor, config_id):
         query = f"SELECT unc_type FROM sensors_meta INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = {config_id} AND name LIKE '{sensor}'"
         self.cursor.execute(query)
         unc = self.cursor.fetchone()
-        return unc['unc_type']
+        return unc["unc_type"]
 
     def dfs_from_tables(self, tables):
         dfs = {}
         for table in tables:
-            query = f'SELECT * FROM {table}'
+            query = f"SELECT * FROM {table}"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
@@ -86,55 +93,55 @@ class DatabaseInstance():
         return dfs
 
     def values_sensors(self, sensors, config_id):
-        values= {}
+        values = {}
         for sensor in sensors:
             print(sensor)
             query = f"SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = {config_id} AND name LIKE '{sensor}'"
             self.cursor.execute(query)
-            print('queried')
+            print("queried")
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
-            df = df.sort_values(by= ['timestamp'])
+            df = df.sort_values(by=["timestamp"])
             values[sensor] = df
         return values
 
     def values_sensors_all(self, sensors):
-        values= {}
+        values = {}
         for sensor in sensors:
             query = f"SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE name LIKE '{sensor}'"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
-            df = df.sort_values(by= ['timestamp'])
+            df = df.sort_values(by=["timestamp"])
             values[sensor] = df
         return values
 
     def values_sensors_selected(self, sensors, ids):
-        string = 'AND ('
+        string = "AND ("
         for j, id in enumerate(ids):
-            string = string + f'sensors.config_id = {id}'
-            if j is not len(ids)-1:
-                string = string + ' OR '
-        string = string + ')'
-        values= {}
+            string = string + f"sensors.config_id = {id}"
+            if j is not len(ids) - 1:
+                string = string + " OR "
+        string = string + ")"
+        values = {}
         for sensor in sensors:
             query = f"SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE name LIKE '{sensor}' {string}"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
-            df = df.sort_values(by= ['timestamp'])
+            df = df.sort_values(by=["timestamp"])
             values[sensor] = df
         return values
 
     def values_actuators(self, actuators, config_id):
-        values= {}
+        values = {}
         for actuator in actuators:
             print("query: actuator")
             query = f"SELECT * FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id} AND name LIKE '{actuator}'"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
-            df = df.sort_values(by= ['timestamp'])
+            df = df.sort_values(by=["timestamp"])
             values[actuator] = df
         return values
 
@@ -158,13 +165,13 @@ class DatabaseInstance():
         firing_start = self.cursor.fetchall()
         firing_starts = []
         for element in firing_start:
-            firing_starts.append(element['timestamp'])
+            firing_starts.append(element["timestamp"])
         query = f"SELECT timestamp FROM states WHERE config_id = {config_id} AND state LIKE 'POST_FIRING'"
         self.cursor.execute(query)
         firing_end = self.cursor.fetchall()
         firing_ends = []
         for element in firing_end:
-            firing_ends.append(element['timestamp'])
+            firing_ends.append(element["timestamp"])
         return firing_starts, firing_ends
 
     def get_actuation_values(self, config_id, actuator_name):
@@ -173,11 +180,11 @@ class DatabaseInstance():
         on = self.cursor.fetchall()
         ons = []
         for element in on:
-            ons.append(element['timestamp'])
+            ons.append(element["timestamp"])
         query = f"SELECT timestamp FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id} AND value = 0 AND name = '{actuator_name}' ORDER BY timestamp ASC"
         self.cursor.execute(query)
         off = self.cursor.fetchall()
         offs = []
         for element in off:
-            offs.append(element['timestamp'])
+            offs.append(element["timestamp"])
         return ons, offs
