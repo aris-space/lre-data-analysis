@@ -30,7 +30,7 @@ def plot_sensors(date, sensor_names, sensors, start, end, title=None, titlex= No
     #fig.update_layout(title = title, xaxis_title = titlex, yaxis_title = titley, template = 'plotly_dark')
     for i, event in enumerate(events):
         print(event)
-        if isinstance(event, list): 
+        if isinstance(event, list):
             if len(event) == 0:
                 print('empty')
         else:
@@ -254,7 +254,7 @@ class Analysis_Instance():
         self.event_names = {}
         self.fill_dicts(db)
         self.initialize_events()
-        
+
         #self.uncs = self.uncertainties(db, sensors, config_ids)
         #self.unctypes = self.uncertainty_types(db, sensors, config_ids)
 
@@ -330,7 +330,7 @@ class Analysis_Instance():
             self.ends[config_id] = sensor_df['timestamp'].max()
             self.starts[config_id] = sensor_df['timestamp'].min()
             self.dates[config_id] = db.get_test_date(config_id)
-    
+
     # this is the function that is used at initialization to fill all the event dictionaries for later use in plots (to create the vertical lines)
     def initialize_events(self):
         for i in self.config_ids:
@@ -417,7 +417,7 @@ class Analysis_Instance():
 
     # this in principle only uses plot_sensors to create one plot per test
     def one_graph_per_test(self, title):
-        for i in self.config_ids: 
+        for i in self.config_ids:
             print('plotting test')
             plot_title = title + ' ' +str(self.dates[i])
             #plot_sensors(sensors, sensors_values[i], firing_starts[i][0]-5, firing_ends[i][len(firing_ends[i])-1]+5, title, 'time in s', 'Pressure in Bar', event_list, event_names)
@@ -454,7 +454,7 @@ class Analysis_Instance():
     # plot the sensors in subplots see subplot_sensors
     def multiplot_sensors(self, config_id, titles, yaxis, rows, columns, n_matrix):
         subplot_sensors(self.dates[config_id], self.sensors, self.sensors_values[config_id], self.starts[config_id], self.ends[config_id], titles, 'Time in s', yaxis, rows, columns, n_matrix, self.event_list[config_id], self.event_names[config_id])
-    
+
     # plots heatmap of given tests, see heatmap
     def make_heatmap(self, config_id, title):
         i = config_id
@@ -478,21 +478,21 @@ class Analysis_Instance():
                 fig.add_trace(go.Scatter(x = df['timestamp']-sync_parameter[id][0], y = df['value'].rolling(30).mean(), name = sensor + ' test '+ str(id)))
 
             # for i, event in enumerate(self.event_list[id]):
-    
-            #     if isinstance(event, list): 
+
+            #     if isinstance(event, list):
             #         if len(event) == 0:
             #             print('empty')
             #     else:
             #         if isinstance(event, list):
             #             event=event[0]
             #         event_name = self.event_names[id][i]
-            
+
             #         x = pd.to_datetime(event, unit = 's')
             #         x = event * 1000
             #     # fig.add_vline(x=event-start, line_width=1, line_dash="dash", line_color="white", annotation_text = event_name)
             #         fig.add_vline(x=x, line_width=1, line_dash="dash", line_color="white",annotation_text = event_name+ ' test ' + str(id))
             #     #fig.add_annotation(yref= 'y domain',x=x, y=0.95-(i%15)*0.05, text=event_name)
-    
+
             # y=[]
             # for i, a in enumerate(fig.to_dict()["layout"]["annotations"]):
             #     y.append([a, 0.95-(i%15)*0.05])

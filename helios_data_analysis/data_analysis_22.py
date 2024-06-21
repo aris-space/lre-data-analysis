@@ -271,7 +271,7 @@ with DatabaseInstance() as db:
                     annotations=[{**element[0], **{"y": element[1]}} for element in y],
                     title=f"{date_string2}: Pressure - Temperature for Firing (FSS) with Config-ID: {id} ",
                 )
-            
+
             fig2.update_yaxes(title_text=yaxis2[0], secondary_y=False)
             fig2.update_yaxes(title_text=yaxis2[1], secondary_y=True)
             # fig.update_yaxes(title_text = yaxis[0])
@@ -417,7 +417,7 @@ with DatabaseInstance() as db:
                     annotations=[{**element[0], **{"y": element[1]}} for element in y],
                     title=f"{date_string3}: Pressure - Thrust - Massflow for Firing (FSS) with Config-ID: {id} ",
                 )
-                            
+
             fig3.update_yaxes(title_text=yaxis3[0], secondary_y=False)
             fig3.update_yaxes(title_text=yaxis3[1], secondary_y=True)
             # fig.update_yaxes(title_text = yaxis[0])
@@ -437,7 +437,7 @@ with DatabaseInstance() as db:
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string3}_{id}_FI_fss_p-m-th_{i}.html"
-                    i += 1                
+                    i += 1
             fig3.write_html(filepath)
 
 
@@ -565,7 +565,7 @@ with DatabaseInstance() as db:
                 fig4.update_layout(
                     annotations=[{**element[0], **{"y": element[1]}} for element in y],
                     title=f"Pressure - Temperature Plot for Firing (OSS) for ID {id}",
-                )                
+                )
             fig4.update_yaxes(title_text=yaxis4[0], secondary_y=False)
             fig4.update_yaxes(title_text=yaxis4[1], secondary_y=True)
             # fig.update_yaxes(title_text = yaxis[0])
@@ -573,7 +573,7 @@ with DatabaseInstance() as db:
             if config_opt == 3:
                 filepath = (
                     f"{GLOBAL_PLOT_FILE_PREFIX}{str(analysis4.dates[id])}_CF_OSS_p-t.html"
-                )            
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
@@ -584,7 +584,7 @@ with DatabaseInstance() as db:
             elif config_opt == 1:
                 filepath = (
                     f"{GLOBAL_PLOT_FILE_PREFIX}{analysis4.dates[id]}_FI_oss_p-t.html"
-                )   
+                )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
@@ -709,7 +709,7 @@ with DatabaseInstance() as db:
                 fig5.update_layout(
                     annotations=[{**element[0], **{"y": element[1]}} for element in y],
                     title=f"Pressure - Thrust - Massflow Plot for Firing (OSS) for ID {id}",
-                )                
+                )
             fig5.update_yaxes(title_text=yaxis5[0], secondary_y=False)
             fig5.update_yaxes(title_text=yaxis5[1], secondary_y=True)
             # fig.update_yaxes(title_text = yaxis[0])
@@ -733,7 +733,7 @@ with DatabaseInstance() as db:
                     filepath = (
                         f"{GLOBAL_PLOT_FILE_PREFIX}{analysis5.dates[id]}_FI_oss_p-m-th{i}.html"
                     )
-                    i = i + 1  
+                    i = i + 1
             fig5.write_html(filepath)
 
         if config_opt == 4 or 1:
@@ -840,7 +840,7 @@ with DatabaseInstance() as db:
                 fig7.update_layout(
                     annotations=[{**element[0], **{"y": element[1]}} for element in y],
                     title=f"{date_string7}: Pressure - Temperature for Ignition when Firing with Config-ID: {id} ",
-                ) 
+                )
             fig7.update_yaxes(title_text=yaxis7[0], secondary_y=False)
             fig7.update_yaxes(title_text=yaxis7[1], secondary_y=True)
             # fig.update_yaxes(title_text = yaxis[0])
@@ -856,7 +856,7 @@ with DatabaseInstance() as db:
                 i = 0
                 while os.path.exists(filepath):
                     filepath = f"{GLOBAL_PLOT_FILE_PREFIX}{date_string7}_{id}_FI_ign_p-t_{i}.html"
-                    i += 1    
+                    i += 1
             fig7.write_html(filepath)
 
         if config_opt == 5:

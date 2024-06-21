@@ -48,16 +48,16 @@ class DatabaseInstance():
             host=credentials["host"],
             user=credentials["user"],
             password=credentials["password"],
-            database=credentials["database"] 
+            database=credentials["database"]
         )
         dbCursor = dbConnection.cursor(buffered=True, dictionary=True)
         return dbConnection, dbCursor
-    
+
     def getTables(self):
         self.cursor.execute('SHOW tables')
         table_rows = self.cursor.fetchall()
         self.tables = pd.DataFrame(table_rows)
-    
+
     def get_test_date(self, config_id):
         query = f"SELECT date FROM tests WHERE config_id = {config_id}"
         self.cursor.execute(query)
@@ -166,7 +166,7 @@ class DatabaseInstance():
         for element in firing_end:
             firing_ends.append(element['timestamp'])
         return firing_starts, firing_ends
-    
+
     def get_actuation_values(self, config_id, actuator_name):
         query = f"SELECT timestamp FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id} AND value = 1 AND name = '{actuator_name}' ORDER BY timestamp ASC"
         self.cursor.execute(query)
