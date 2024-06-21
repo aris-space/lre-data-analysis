@@ -59,18 +59,18 @@ class DatabaseInstance():
         self.tables = pd.DataFrame(table_rows)
     
     def get_test_date(self, config_id):
-        query = "SELECT date FROM tests WHERE config_id = %s" %(config_id)
+        query = f"SELECT date FROM tests WHERE config_id = {config_id}"
         self.cursor.execute(query)
         return self.cursor.fetchone()['date'].strftime("%m-%d-%Y")
 
     def get_unc(self, sensor, config_id):
-        query = "SELECT unc FROM sensors_meta INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = %s AND name LIKE '%s'" %(config_id, sensor)
+        query = f"SELECT unc FROM sensors_meta INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = {config_id} AND name LIKE '{sensor}'"
         self.cursor.execute(query)
         unc = self.cursor.fetchone()
         return unc['unc']
 
     def get_unc_type(self, sensor, config_id):
-        query = "SELECT unc_type FROM sensors_meta INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = %s AND name LIKE '%s'" %(config_id, sensor)
+        query = f"SELECT unc_type FROM sensors_meta INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = {config_id} AND name LIKE '{sensor}'"
         self.cursor.execute(query)
         unc = self.cursor.fetchone()
         return unc['unc_type']
@@ -78,7 +78,7 @@ class DatabaseInstance():
     def dfs_from_tables(self, tables):
         dfs = {}
         for table in tables:
-            query = 'SELECT * FROM %s' %(table)
+            query = f'SELECT * FROM {table}'
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
@@ -89,7 +89,7 @@ class DatabaseInstance():
         values= {}
         for sensor in sensors:
             print(sensor)
-            query = "SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = %s AND name LIKE '%s'" %(config_id, sensor)
+            query = f"SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE config_id = {config_id} AND name LIKE '{sensor}'"
             self.cursor.execute(query)
             print('queried')
             rows = self.cursor.fetchall()
@@ -101,7 +101,7 @@ class DatabaseInstance():
     def values_sensors_all(self, sensors):
         values= {}
         for sensor in sensors:
-            query = "SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE name LIKE '%s'" %(sensor)
+            query = f"SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE name LIKE '{sensor}'"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
@@ -112,13 +112,13 @@ class DatabaseInstance():
     def values_sensors_selected(self, sensors, ids):
         string = 'AND ('
         for j, id in enumerate(ids):
-            string = string + 'sensors.config_id = %s' %(id)
+            string = string + f'sensors.config_id = {id}'
             if j is not len(ids)-1:
                 string = string + ' OR '
         string = string + ')'
         values= {}
         for sensor in sensors:
-            query = "SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE name LIKE '%s' %s" %(sensor, string)
+            query = f"SELECT * FROM sensor_values INNER JOIN sensors ON sensor_id = sensors.id WHERE name LIKE '{sensor}' {string}"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
@@ -130,7 +130,7 @@ class DatabaseInstance():
         values= {}
         for actuator in actuators:
             print("query: actuator")
-            query = "SELECT * FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = %s AND name LIKE '%s'" %(config_id, actuator)
+            query = f"SELECT * FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id} AND name LIKE '{actuator}'"
             self.cursor.execute(query)
             rows = self.cursor.fetchall()
             df = pd.DataFrame(rows)
@@ -139,27 +139,27 @@ class DatabaseInstance():
         return values
 
     def values_circuits(self, config_id):
-        query = "SELECT * FROM circuit_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = %s" %(config_id)
+        query = f"SELECT * FROM circuit_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id}"
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
         df = pd.DataFrame(rows)
         return df
 
     def values_states(self, config_id):
-        query = "SELECT * FROM states WHERE config_id = %s" %(config_id)
+        query = f"SELECT * FROM states WHERE config_id = {config_id}"
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
         df = pd.DataFrame(rows)
         return df
 
     def get_firing_times(self, config_id):
-        query = "SELECT timestamp FROM states WHERE config_id = %s AND state LIKE 'firing confirmation'" %(config_id)
+        query = f"SELECT timestamp FROM states WHERE config_id = {config_id} AND state LIKE 'firing confirmation'"
         self.cursor.execute(query)
         firing_start = self.cursor.fetchall()
         firing_starts = []
         for element in firing_start:
             firing_starts.append(element['timestamp'])
-        query = "SELECT timestamp FROM states WHERE config_id = %s AND state LIKE 'POST_FIRING'" %(config_id)
+        query = f"SELECT timestamp FROM states WHERE config_id = {config_id} AND state LIKE 'POST_FIRING'"
         self.cursor.execute(query)
         firing_end = self.cursor.fetchall()
         firing_ends = []
@@ -168,13 +168,13 @@ class DatabaseInstance():
         return firing_starts, firing_ends
     
     def get_actuation_values(self, config_id, actuator_name):
-        query = "SELECT timestamp FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = %s AND value = 1 AND name = '%s' ORDER BY timestamp ASC" %(config_id, actuator_name)
+        query = f"SELECT timestamp FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id} AND value = 1 AND name = '{actuator_name}' ORDER BY timestamp ASC"
         self.cursor.execute(query)
         on = self.cursor.fetchall()
         ons = []
         for element in on:
             ons.append(element['timestamp'])
-        query = "SELECT timestamp FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = %s AND value = 0 AND name = '%s' ORDER BY timestamp ASC" %(config_id, actuator_name)
+        query = f"SELECT timestamp FROM actuator_values INNER JOIN actuators ON actuator_id = actuators.id WHERE config_id = {config_id} AND value = 0 AND name = '{actuator_name}' ORDER BY timestamp ASC"
         self.cursor.execute(query)
         off = self.cursor.fetchall()
         offs = []

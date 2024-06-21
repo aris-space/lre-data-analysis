@@ -38,10 +38,10 @@ def plot_sensors(date, sensor_names, sensors, start, end, title=None, titlex= No
             if event-start>= 0:
                 fig.add_vline(x=event-start, line_width=1, line_dash="dash", line_color="white", annotation_text = event_name)
     fig.show()
-    filepath = "/home/dacs/git/data-management/database_pro/simpleplot_%s.html" %(str(date))
+    filepath = f"/home/dacs/git/data-management/database_pro/simpleplot_{str(date)}.html"
     i=0
     while os.path.exists(filepath):
-        filepath = "/home/dacs/git/data-management/database_pro/simpleplot_%s_%s.html" %(str(date), str(i))
+        filepath = f"/home/dacs/git/data-management/database_pro/simpleplot_{str(date)}_{str(i)}.html"
         i=i+1
     fig.write_html(filepath)
 
@@ -80,10 +80,10 @@ def subplot_sensors(date, sensor_names, sensors, start=0, end=100000000000000000
             fig.add_vline(x=event-start, line_width=1, line_dash="dash", line_color="white", annotation_text = event_name)
         i=i+1
     fig.show()
-    filepath = "/home/dacs/git/data-management/database_pro/multiplot_%s.html" %(date)
+    filepath = f"/home/dacs/git/data-management/database_pro/multiplot_{date}.html"
     i=0
     while os.path.exists(filepath):
-        filepath = "/home/dacs/git/data-management/database_pro/multiplot_%s_%s.html" %(date, str(i))
+        filepath = f"/home/dacs/git/data-management/database_pro/multiplot_{date}_{str(i)}.html"
         i= i+1
     fig.write_html(filepath)
 
@@ -111,10 +111,10 @@ def heatmap(date, sensor_names, sensors_values, start=0, end=1000000000000000000
             fig.add_vline(x=event-start, line_width=1, line_dash="dash", line_color="white", annotation_text = event_name)
         i=i+1
     fig.show()
-    filepath = "/home/dacs/git/data-management/database_pro/heatmap_%s.html" %(date)
+    filepath = f"/home/dacs/git/data-management/database_pro/heatmap_{date}.html"
     i=0
     while os.path.exists(filepath):
-        filepath = "/home/dacs/git/data-management/database_pro/heatmap_%s_%s.html" %(date, str(i))
+        filepath = f"/home/dacs/git/data-management/database_pro/heatmap_{date}_{str(i)}.html"
         i = i+1
     fig.write_html(filepath)
 
@@ -147,7 +147,7 @@ def compare_tests(config_ids, sensor_names, sensors, starts, ends, titles=None, 
     filepath = "/home/dacs/git/data-management/database_pro/compare_tests.html"
     i=0
     while os.path.exists(filepath):
-        filepath = "/home/dacs/git/data-management/database_pro/compare_tests_%s.html" %(str(i))
+        filepath = f"/home/dacs/git/data-management/database_pro/compare_tests_{str(i)}.html"
         i=i+1
     fig.write_html(filepath)
 
@@ -180,7 +180,7 @@ def three_fold_relation(db, x_sensor, y_sensor, color_sensor, config_ids, title,
     filepath = "/home/dacs/git/data-management/database_pro/three_fold.html"
     i=0
     while os.path.exists(filepath):
-        filepath = "/home/dacs/git/data-management/database_pro/three_fold_%s.html" %(str(i))
+        filepath = f"/home/dacs/git/data-management/database_pro/three_fold_{str(i)}.html"
         i=i+1
     fig.write_html(filepath)
 
@@ -208,7 +208,7 @@ def two_fold_relation(db, x_sensor, y_sensor, config_ids, title, title_x, title_
     filepath = "/home/dacs/git/data-management/database_pro/two_fold.html"
     i=0
     while os.path.exists(filepath):
-        filepath = "/home/dacs/git/data-management/database_pro/two_fold_%s.html" %(str(i))
+        filepath = f"/home/dacs/git/data-management/database_pro/two_fold_{str(i)}.html"
         i=i+1
     fig.write_html(filepath)
 
@@ -442,10 +442,10 @@ class Analysis_Instance():
                      fig.add_vline(x=event-self.starts[i], line_width=1, line_dash="dash", line_color="white", annotation_text = event_name)
             fig.update_layout(template = 'plotly_dark')
             fig.show()
-            filepath = "/home/dacs/git/data-management/database_pro/moving_average_%s_%s.html" %(sensor, self.date[config_id])
+            filepath = f"/home/dacs/git/data-management/database_pro/moving_average_{sensor}_{self.date[config_id]}.html"
             i=0
             while os.path.exists(filepath):
-                filepath = "/home/dacs/git/data-management/database_pro/moving_average_%s_%s_%s.html" %(sensor, self.date[config_id], str(i))
+                filepath = f"/home/dacs/git/data-management/database_pro/moving_average_{sensor}_{self.date[config_id]}_{str(i)}.html"
                 i=i+1
             fig.write_html(filepath)
 
@@ -462,7 +462,7 @@ class Analysis_Instance():
     def test_comparison(self, config_ids, title):
         title = []
         for id in config_ids:
-            title.append('Temperatures test %s' %(self.dates[id]))
+            title.append(f'Temperatures test {self.dates[id]}')
         title = tuple(title)
         compare_tests(config_ids, self.sensors, self.sensors_values, self.starts, self.ends, title, 'Time in s', 'temperature in °C', 1, len(config_ids), self.event_list, self.event_names)
 
@@ -507,6 +507,6 @@ class Analysis_Instance():
         filepath = "/home/dacs/git/data-management/database_pro/overlay_tests.html"
         i=0
         while os.path.exists(filepath):
-            filepath = "/home/dacs/git/data-management/database_pro/overlay_tests_%s.html" %(str(i))
+            filepath = f"/home/dacs/git/data-management/database_pro/overlay_tests_{str(i)}.html"
             i=i+1
         fig.write_html(filepath)

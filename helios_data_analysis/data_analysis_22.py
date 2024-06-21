@@ -136,14 +136,12 @@ with DatabaseInstance() as db:
             # # fig.update_yaxes(title_text = yaxis[0])
             # fig1.show()
             # filepath = (
-            #     "/home/dacs/git/data-management/database_pro/simpleplot_%s.html"
-            #     % (str(analysis1.dates[id]))
+            #     f"/home/dacs/git/data-management/database_pro/simpleplot_{analysis1.dates[id]}.html"
             # )
             # i = 0
             # while os.path.exists(filepath):
             #     filepath = (
-            #         "/home/dacs/git/data-management/database_pro/simpleplot_%s_%s.html"
-            #         % (str(analysis1.dates[id]), str(i))
+            #         f"/home/dacs/git/data-management/database_pro/simpleplot_{analysis1.dates[id]}_{i}.html"
             #     )
             #     i = i + 1
             # fig1.write_html(filepath)
@@ -573,27 +571,23 @@ with DatabaseInstance() as db:
             fig4.show()
             if config_opt == 3:
                 filepath = (
-                    "/home/dacs/git/data-management/database_pro/%s_CF_OSS_p-t.html"
-                    % (str(analysis4.dates[id]))
+                    f"/home/dacs/git/data-management/database_pro/{str(analysis4.dates[id])}_CF_OSS_p-t.html"
                 )            
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        "/home/dacs/git/data-management/database_pro/%s_CF_OSS_p-t_%s.html"
-                        % (str(analysis4.dates[id]), str(i))
+                        f"/home/dacs/git/data-management/database_pro/{analysis4.dates[id]}_CF_OSS_p-t_{i}.html"
                     )
                     i = i + 1
 
             elif config_opt == 1:
                 filepath = (
-                    "/home/dacs/git/data-management/database_pro/%s_FI_oss_p-t.html"
-                    % (str(analysis4.dates[id]))
+                    f"/home/dacs/git/data-management/database_pro/{analysis4.dates[id]}_FI_oss_p-t.html"
                 )   
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        "/home/dacs/git/data-management/database_pro/%s_FI_oss_p-t_%s.html"
-                        % (str(analysis4.dates[id]), str(i))
+                        f"/home/dacs/git/data-management/database_pro/{analysis4.dates[id]}_FI_oss_p-t_{i}.html"
                     )
                     i = i + 1
             fig4.write_html(filepath)
@@ -721,26 +715,22 @@ with DatabaseInstance() as db:
             fig5.show()
             if config_opt == 3:
                 filepath = (
-                    "/home/dacs/git/data-management/database_pro/%s_CF_OSS_p-m-th.html"
-                    % (str(analysis5.dates[id]))
+                    f"/home/dacs/git/data-management/database_pro/{str(analysis5.dates[id])}_CF_OSS_p-m-th.html"
                 )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        "/home/dacs/git/data-management/database_pro/%s_CF_OSS_p-m-th%s.html"
-                        % (str(analysis5.dates[id]), str(i))
+                        f"/home/dacs/git/data-management/database_pro/{analysis5.dates[id]}_CF_OSS_p-m-th{i}.html"
                     )
                     i = i + 1
             elif config_opt == 1:
                 filepath = (
-                    "/home/dacs/git/data-management/database_pro/%s_FI_oss_p-m-th.html"
-                    % (str(analysis5.dates[id]))
+                    f"/home/dacs/git/data-management/database_pro/{analysis5.dates[id]}_FI_oss_p-m-th.html"
                 )
                 i = 0
                 while os.path.exists(filepath):
                     filepath = (
-                        "/home/dacs/git/data-management/database_pro/%s_FI_oss_p-m-th%s.html"
-                        % (str(analysis5.dates[id]), str(i))
+                        f"/home/dacs/git/data-management/database_pro/{analysis5.dates[id]}_FI_oss_p-m-th{i}.html"
                     )
                     i = i + 1  
             fig5.write_html(filepath)
