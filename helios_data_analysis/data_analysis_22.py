@@ -4,7 +4,7 @@ from analysis_functions import *
 from db_analysis_utilities import *
 from analysis_functions import *
 
-GLOBAL_PLOT_FILE_PREFIX = "/home/dacs/git/data-management/database_pro/"
+GLOBAL_PLOT_FILE_PREFIX = ""
 
 with DatabaseInstance() as db:
     id_input = input("Please enter all config IDs separated by spaces: ")

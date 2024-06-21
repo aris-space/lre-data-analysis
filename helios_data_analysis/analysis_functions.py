@@ -16,7 +16,7 @@ import os.path
 
 from db_analysis_utilities import *
 
-GLOBAL_PLOT_FILE_PREFIX = "/home/dacs/git/data-management/database_pro/"
+GLOBAL_PLOT_FILE_PREFIX = ""
 
 #plot sensors of a given test in one plot
 def plot_sensors(date, sensor_names, sensors, start, end, title=None, titlex= None, titley= None, events = [], event_names=[]):
