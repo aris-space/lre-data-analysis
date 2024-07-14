@@ -157,7 +157,7 @@ with DatabaseInstance() as db:
         #     # CF FSS
         #     # pressure - temperature plot
         #     print("conf = 2")
-        if config_opt == 2 or 1:
+        if config_opt == 2 or config_opt == 1:
             if config_opt == 2:
                 print("FSS COLD FLOW CONFIGURATION")
             sensors2 = [
@@ -462,7 +462,7 @@ with DatabaseInstance() as db:
 
         # plot 1: pressure - temperature
 
-        if config_opt == 3 or 1:
+        if config_opt == 3 or config_opt == 1:
             if config_opt == 3:
                 print("OSS CF CONFIGURATION")
             sensors4 = [
@@ -735,7 +735,7 @@ with DatabaseInstance() as db:
                     i = i + 1
             fig5.write_html(filepath)
 
-        if config_opt == 4 or 1:
+        if config_opt == 4 or config_opt == 1:
             if config_opt == 4:
                 print("IGNITER CONFIGURATION")
 
