@@ -1,5 +1,5 @@
-# helios-data-analysis
-Various scripts to perform data analysis for HELIOS firings
+# lre-data-analysis
+Source code for the streamlit data-analysis app
 
 ## Usage
 
