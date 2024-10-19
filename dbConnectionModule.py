@@ -1,39 +1,15 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 from mysql.connector import connect, Error
-from datetime import datetime, timedelta
 from io import StringIO
-import os
+from datetime import timedelta
 
-# DATBASE FUNCTION DEFINITIONS
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# database credentials are stored in environmental variables
 connection_config = {
-    "host": st.secrets["DB_HOST"],
-    "user": st.secrets["DB_USER"],
-    "password": st.secrets["DB_PASSWORD"],
-    "database": st.secrets["DB_NAME"],
+    "host": "aris-helios.vsos.ethz.ch",
+    "user": "aris-read-only-user",
+    "password": "y9FkMVTr_TU_36_dr3DvPwWwFq_atM",
+    "database": "aris",
 }
-
-
-if "selected_config_id" not in st.session_state:
-    st.session_state["selected_config_id"] = None
-
-if "selected_sensors" not in st.session_state:
-    st.session_state["selected_sensors"] = []
-
-if "start_time" not in st.session_state:
-    st.session_state["start_time"] = ""
-
-if "end_time" not in st.session_state:
-    st.session_state["end_time"] = ""
-
-if "show_plot" not in st.session_state:
-    st.session_state["show_plot"] = False
-
 
 # Function to Fetch Data from the Database in general
 @st.cache_data(hash_funcs={connect: id}, show_spinner=False)
@@ -53,7 +29,8 @@ def get_sensor_values_time_range(sensor_id, start_time, end_time):
     query = f"""
     SELECT value, timestamp
     FROM sensor_values
-    WHERE sensor_id = '{sensor_id}' AND timestamp BETWEEN UNIX_TIMESTAMP('{start_time}') AND UNIX_TIMESTAMP('{end_time}');
+    WHERE sensor_id = '{sensor_id}' AND timestamp BETWEEN UNIX_TIMESTAMP('{start_time}') AND UNIX_TIMESTAMP('{end_time}')
+    ORDER BY timestamp ASC;
     """
     df = fetch_data(query)
     df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")  # Convert to datetime
@@ -151,7 +128,8 @@ def get_sensor_values(sensor_id):
     query = f"""
     SELECT value, timestamp
     FROM sensor_values
-    WHERE sensor_id = '{sensor_id}';
+    WHERE sensor_id = '{sensor_id}
+    ORDER BY timestamp ASC;'
     """
     df = fetch_data(query)
     if not df.empty:
@@ -159,6 +137,26 @@ def get_sensor_values(sensor_id):
             df["timestamp"], unit="s"
         )  # Convert timestamps to datetime objects
     return df
+
+# Function to Tetch Sensor Units for multiple Sensors
+def get_sensor_units_for_multiple_sensors(sensor_ids):
+    dfs = []
+    for sensor_id in sensor_ids:
+        df = get_sensor_unit(sensor_id)
+
+        if not df.empty: 
+            dfs.append(df)
+
+    return pd.concat(dfs)
+
+# Function to fetch sensor units for a specific sensor_id
+def get_sensor_unit(sensor_id):
+    query = f"""
+    SELECT sensor_id, unit
+    FROM sensors_meta
+    WHERE sensor_id = '{sensor_id}'
+    """
+    return fetch_data(query)
 
 
 # Function to convert dataframe into csv file so that data can be downloaded
@@ -173,7 +171,7 @@ def convert_df_to_csv(df):
 # Function to Calculate Moving Average, change window if  you want to adapt how many values should be taken in the moving average
 @st.cache_data
 def calculate_moving_average(df, window=30):
-    df["value_ma"] = df["value"].rolling(window=window).mean()
+    df["value_ma"] = df["value"].rolling(window=window, center=True, win_type='gaussian').mean(std=window)
     df["value_ma"] = df["value_ma"].fillna(df["value"])
     return df
 
@@ -250,7 +248,7 @@ def update_time_range():
     st.session_state["end_time"] = end_time
 
 
-# this here doesnt work yet, i'm not sure how to implement so that we eventually actually have the actuator names in there. but i'll keep trying
+# this here doesnt work yet, I'm not sure how to implement so that we eventually actually have the actuator names in there. but i'll keep trying
 def fetch_actuator_times(config_id, actuator_name="DefaultActuator"):
     """Fetch activation and deactivation times for a given actuator and configuration."""
     query_on = f"""
@@ -276,122 +274,3 @@ def fetch_actuator_times(config_id, actuator_name="DefaultActuator"):
         df_off["timestamp"] = pd.to_datetime(df_off["timestamp"], unit="s")
 
     return df_on["timestamp"].tolist(), df_off["timestamp"].tolist()
-
-
-# Streamlit Interface Setup
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-st.image(
-    "https://raw.githubusercontent.com/derwidii/helios_database/main/HELIOS.png",
-    width=100,
-)
-st.title("HELIOS Testing Database Visualisation")
-st.text("App Creation Date: 2024-03-13, Updated: 2024-05-10")
-
-# Create the tabs
-tabs = st.tabs(["Sensor Comparison", "Test Comparison"])
-
-with tabs[0] as tab1:
-    # Content for Sensor Comparison Tab
-    config_id_date_options = get_config_ids_with_dates()
-    if not config_id_date_options.empty:
-        selected_config_id_date = st.selectbox(
-            "Select a Config ID with Date:",
-            config_id_date_options["config_id_date"],
-            key="config_id_select",
-            on_change=update_time_range,  # important so that when we change the test the timerange is updated again
-        )
-
-        if st.session_state.selected_config_id:
-            sensor_options = get_sensors_with_data(st.session_state.selected_config_id)
-            selected_sensors = st.multiselect(
-                "Select Sensors:", sensor_options["name"], key="sensor_select"
-            )
-            st.session_state.selected_sensors = selected_sensors
-
-            if selected_sensors:
-                st.session_state["start_time"] = st.text_input(
-                    "Start Time (YYYY-MM-DD HH:MM:SS)",
-                    value=st.session_state["start_time"],
-                    key="start_time_input",
-                )
-                st.session_state["end_time"] = st.text_input(
-                    "End Time (YYYY-MM-DD HH:MM:SS)",
-                    value=st.session_state["end_time"],
-                    key="end_time_input",
-                )
-
-                if st.button("Show for Start-End-Time"):
-                    sensor_ids = get_sensor_ids(
-                        st.session_state.selected_sensors,
-                        st.session_state.selected_config_id,
-                    )
-                    df_filtered = get_sensor_values_with_ma_for_multiple_sensors(
-                        sensor_ids,
-                        st.session_state.selected_sensors,
-                        st.session_state["start_time"],
-                        st.session_state["end_time"],
-                    )
-
-                    if not df_filtered.empty:
-                        fig = px.line(
-                            df_filtered,
-                            x="timestamp",
-                            y="value_ma",
-                            color="sensor_name",
-                            title="Filtered Sensor Data",
-                            labels={
-                                "value_ma": "Sensor Value (Moving Avg)",
-                                "timestamp": "Timestamp",
-                            },
-                        )
-                        st.plotly_chart(fig, use_container_width=True)
-                    else:
-                        st.error("No data found for the selected range.")
-
-with tabs[1] as tab2:
-    # Content for Test Comparison Tab
-    sensor_options = get_distinct_sensor_names()
-    if not sensor_options.empty:
-        selected_sensor = st.selectbox(
-            "Select a Sensor:",
-            options=sensor_options["name"],
-            key="sensor_test_comparison_select",
-        )
-
-        # fetch here all config ids for sesnors with dates
-        config_date_options = get_config_ids_for_sensor_with_dates(selected_sensor)
-        if not config_date_options.empty:
-            selected_config_dates = st.multiselect(
-                "Select Config IDs with Dates to Compare:",
-                options=config_date_options["config_id_date"],
-                key="config_date_select",
-            )
-            selected_configs = [
-                cd.split(" - ")[0] for cd in selected_config_dates
-            ]  # Extract config IDs from selections
-
-            if selected_configs:
-                df_comparison = get_sensor_data_for_multiple_tests(
-                    selected_sensor, selected_configs
-                )
-                if not df_comparison.empty:
-                    fig_comparison = px.line(
-                        df_comparison,
-                        x="normalized_timestamp",
-                        y="value",
-                        color="config_id",
-                        title="Test Comparison for Selected Sensor",
-                        labels={
-                            "value": "Sensor Value",
-                            "normalized_timestamp": "Minutes Since Start",
-                            "config_id": "Configuration ID",
-                        },
-                    )
-
-                    st.plotly_chart(fig_comparison, use_container_width=True)
-                else:
-                    st.error("No data found for the selected tests.")
-        else:
-            st.error("No configuration IDs found for the selected sensor.")
-    else:
-        st.error("No sensors found.")
