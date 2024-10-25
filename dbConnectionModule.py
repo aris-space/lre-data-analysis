@@ -4,11 +4,12 @@ from mysql.connector import connect, Error
 from io import StringIO
 from datetime import timedelta
 
+# database credentials are stored in environmental variables
 connection_config = {
-    "host": "aris-helios.vsos.ethz.ch",
-    "user": "aris-read-only-user",
-    "password": "y9FkMVTr_TU_36_dr3DvPwWwFq_atM",
-    "database": "aris",
+    "host": st.secrets["DB_HOST"],
+    "user": st.secrets["DB_USER"],
+    "password": st.secrets["DB_PASSWORD"],
+    "database": st.secrets["DB_NAME"],
 }
 
 def test():
@@ -128,6 +129,8 @@ def get_sensor_values_with_ma_for_multiple_sensors(
         else:
             df = get_sensor_values(sensor_id)
         
+        st.write(df)
+
         if not df.empty:
             df = calculate_moving_average(df)
 
@@ -227,6 +230,7 @@ def get_sensor_data_for_multiple_tests(sensor_name, config_ids):
         ORDER BY sensor_values.timestamp;
         """
         df = fetch_data(query)
+
         if not df.empty:
             df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")
             if min_timestamp is None or df["timestamp"].min() < min_timestamp:

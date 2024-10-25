@@ -5,14 +5,6 @@ import user_interface.uiModule as ui
 # DATBASE FUNCTION DEFINITIONS
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# database credentials are stored in environmental variables
-# connection_config = {
-#     "host": st.secrets["DB_HOST"],
-#     "user": st.secrets["DB_USER"],
-#     "password": st.secrets["DB_PASSWORD"],
-#     "database": st.secrets["DB_NAME"],
-# }
-
 if "selected_config_id" not in st.session_state:
     st.session_state["selected_config_id"] = None
 
