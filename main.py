@@ -28,5 +28,15 @@ if "end_time" not in st.session_state:
 if "show_plot" not in st.session_state:
     st.session_state["show_plot"] = False
 
+SENSOR_TYPES = {
+    "bar": "Pressure",
+    "barg": "Pressure",
+    "C": "Temperature",
+    "N": "Force",
+    "kg": "Mass",
+    "g/s": "Massflow",
+    "l/s": "Volumeflow",
+    "s": "Time"
+}
 
 ui.generate()

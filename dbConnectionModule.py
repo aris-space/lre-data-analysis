@@ -11,6 +11,10 @@ connection_config = {
     "database": "aris",
 }
 
+def test():
+    query = """SELECT date, config_id FROM tests ORDER BY date DESC;"""
+    return fetch_data(query)
+
 # Function to Fetch Data from the Database in general
 @st.cache_data(hash_funcs={connect: id}, show_spinner=False)
 def fetch_data(query):
@@ -34,13 +38,18 @@ def get_sensor_values_time_range(sensor_id, start_time, end_time):
     """
     df = fetch_data(query)
     df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")  # Convert to datetime
+
+    # Normalize timestamps and convert to seconds
+    df["normalized_timestamp"] = (
+            df["timestamp"] - df["timestamp"].min()
+        ) / timedelta(seconds = 1)
     return df
 
 
 # Function to Fetch Config IDs to show them in the dropdown menu
 def get_config_ids_with_dates():
     """Fetch distinct config IDs with dates."""
-    query = "SELECT config_id, date FROM tests ORDER BY date DESC;"
+    query = "SELECT date, config_id FROM tests ORDER BY date DESC;"
     df = fetch_data(query)
     if not df.empty:
         # Combine config_id and date in a string for the dropdown
@@ -110,17 +119,22 @@ def get_sensor_ids(sensor_names, config_id):
 def get_sensor_values_with_ma_for_multiple_sensors(
     sensor_ids, sensor_names, start_time=None, end_time=None
 ):
-    dfs = []
+    dfs = {}
     for sensor_id, sensor_name in zip(sensor_ids, sensor_names):
+        unit = get_sensor_unit(sensor_id)
+
         if start_time and end_time:
             df = get_sensor_values_time_range(sensor_id, start_time, end_time)
         else:
             df = get_sensor_values(sensor_id)
+        
         if not df.empty:
             df = calculate_moving_average(df)
-            df["sensor_name"] = sensor_name  # Add sensor name to the DataFrame
-            dfs.append(df)
-    return pd.concat(dfs)
+
+            if unit in dfs: dfs[unit][sensor_name] = df
+            else: dfs[unit] = {sensor_name: df}
+    
+    return dfs
 
 
 # Function to fetch all sensor values for a specific sensor_id
@@ -136,27 +150,21 @@ def get_sensor_values(sensor_id):
         df["timestamp"] = pd.to_datetime(
             df["timestamp"], unit="s"
         )  # Convert timestamps to datetime objects
+
+        # Normalize timestamps and convert to seconds
+        df["normalized_timestamp"] = (
+                df["timestamp"] - df["timestamp"].min()
+            ) / timedelta(seconds=1)
     return df
 
-# Function to Tetch Sensor Units for multiple Sensors
-def get_sensor_units_for_multiple_sensors(sensor_ids):
-    dfs = []
-    for sensor_id in sensor_ids:
-        df = get_sensor_unit(sensor_id)
-
-        if not df.empty: 
-            dfs.append(df)
-
-    return pd.concat(dfs)
-
-# Function to fetch sensor units for a specific sensor_id
+# Function to fetch sensor units for a specific sensor_id as a string
 def get_sensor_unit(sensor_id):
     query = f"""
-    SELECT sensor_id, unit
+    SELECT unit
     FROM sensors_meta
     WHERE sensor_id = '{sensor_id}'
     """
-    return fetch_data(query)
+    return fetch_data(query)['unit'][0]
 
 
 # Function to convert dataframe into csv file so that data can be downloaded
@@ -172,6 +180,7 @@ def convert_df_to_csv(df):
 @st.cache_data
 def calculate_moving_average(df, window=30):
     df["value_ma"] = df["value"].rolling(window=window, center=True, win_type='gaussian').mean(std=window)
+    # df["value_ma_std"] = df["value"].rolling(window=window).mean()
     df["value_ma"] = df["value_ma"].fillna(df["value"])
     return df
 
@@ -247,6 +256,11 @@ def update_time_range():
     st.session_state["start_time"] = start_time
     st.session_state["end_time"] = end_time
 
+def update_available_sensors():
+    st.session_state.selected_config_id = st.session_state["config_select"].split(" - ")[0]
+
+    # get all sensors that were connected at this test
+    st.session_state.available_sensors = get_sensors_with_data(st.session_state.selected_config_id)
 
 # this here doesnt work yet, I'm not sure how to implement so that we eventually actually have the actuator names in there. but i'll keep trying
 def fetch_actuator_times(config_id, actuator_name="DefaultActuator"):

@@ -28,6 +28,9 @@ if not sensor_options.empty:
             df_comparison = db.get_sensor_data_for_multiple_tests(
                 selected_sensor, selected_configs
             )
+
+            st.write(df_comparison)
+
             if not df_comparison.empty:
                 fig_comparison = px.line(
                     df_comparison,
