@@ -9,7 +9,7 @@ import pandas as pd
 import dbConnectionModule as db
 from main import SENSOR_TYPES
 
-def plot(data):
+def plot(data, key):
     fig = make_subplots(specs=[[{"secondary_y" : True}]], x_title='Time [s]')
 
     units = ['none']
@@ -57,12 +57,16 @@ def plot(data):
         "side": "right"
     } 
 )
-    st.plotly_chart(fig, use_container_width=True)
-
-# st.write(st.session_state.selected_plot)
-
-# st.write(st.session_state.plotOne, st.session_state.plotTwo, st.session_state.plotThree, st.session_state.plotFour)
+    st.plotly_chart(fig, use_container_width=True, key=key)
 
 # === Create 1st Plot ===
 
-plot(st.session_state.plotOne)
+col1, col2 = st.columns(2)
+
+with col1:
+    plot(st.session_state.plotOne, 'one')
+    plot(st.session_state.plotThree, 'three')
+
+with col2:
+    plot(st.session_state.plotTwo, 'two')
+    plot(st.session_state.plotFour, 'four')
