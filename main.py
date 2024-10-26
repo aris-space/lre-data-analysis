@@ -2,8 +2,7 @@ import streamlit as st
 
 import user_interface.uiModule as ui
 
-# DATBASE FUNCTION DEFINITIONS
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# === Session Variable Initialization ===
 
 if "selected_config_id" not in st.session_state:
     st.session_state["selected_config_id"] = None
@@ -19,6 +18,15 @@ if "end_time" not in st.session_state:
 
 if "show_plot" not in st.session_state:
     st.session_state["show_plot"] = False
+
+if "plotOne" not in st.session_state:
+    st.session_state["plotOne"] = {}
+    st.session_state["plotTwo"] = {}
+    st.session_state["plotThree"] = {}
+    st.session_state["plotFour"] = {}
+
+if "selected_plot" not in st.session_state:
+    st.session_state.selected_plot = st.session_state.plotOne
 
 SENSOR_TYPES = {
     "bar": "Pressure",

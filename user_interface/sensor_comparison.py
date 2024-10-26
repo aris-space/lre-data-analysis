@@ -59,8 +59,8 @@ if not config_id_date_options.empty:
 
                 ctr = 1
                 names = []
-                for unit, dict in dfs_filtered.items():
-                    for name, df in dict.items():
+                for unit, sensors in dfs_filtered.items():
+                    for name, df in sensors.items():
 
                         if df.empty:
                             st.error("No data found for the selected range.")
