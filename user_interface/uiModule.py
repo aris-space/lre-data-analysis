@@ -4,23 +4,9 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 import dbConnectionModule as db
-import pandas as pd
+from user_interface.plots import show_plots as plots
 
-
-def generate():
-    # === Naviagation ===
-
-    pg = st.navigation([st.Page("user_interface/home.py", title="Home", icon=":material/home:"), 
-                        st.Page("user_interface/test_comparison.py", title="Compare Tests", icon=":material/lab_panel:"), 
-                        st.Page("user_interface/sensor_comparison.py", title="Compare Sensores", icon=":material/speed:"), 
-                        st.Page("user_interface/test_page.py", title="Playground", icon=":material/toys:"),
-                        st.Page("user_interface/plots.py", title="Plotting", icon=":material/show_chart:")])
-    pg.run()
-
-    # === Sidebar ===
-
-    # st.sidebar.page_link(st.Page("user_interface/home.py"), label="Dashboard", icon=":material/home:")
-
+def sensor_panel():
     config_options = db.get_config_ids_with_dates()
 
     if config_options.empty:
@@ -33,6 +19,11 @@ def generate():
         key="config_select",
         on_change=db.update_available_sensors
         )
+    
+    # Initalize available sensors (only relevant when the page initially loads)
+    if st.session_state["selected_config_id"] is None:
+        db.update_available_sensors()
+
     col2.markdown(f"**Description:** \n {config_options.loc[int(st.session_state.selected_config_id), 'description']}")
     
     sensor_col1, sensor_ccol2, sensor_ccol3 = st.sidebar.columns(3)
@@ -66,5 +57,33 @@ def generate():
                 "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px"}
             },
             key="plot_select", on_change=db.update_selected_plot)
-                
+
+def generate():
+    # === Sidebar ===
+    # --- Headline ---
+
+    st.sidebar.image("./aris-logo.png", width=100,)
+    st.sidebar.title("Testing Database Visualisation")
+    st.sidebar.text("App Creation Date: 2024-03-13, Updated: 2024-10-27")
+
     st.sidebar.divider()
+
+    # --- Controls ---
+
+    sensor_panel()
+
+    # TODO: add actuator_panel
+                
+    # st.sidebar.divider()
+
+    # actuator_panel()
+
+    # TODO: add coefficient_panel
+
+    # st.sidebar.divider()
+
+    # coefficient_panel()
+
+    # === Content ===
+    # --- Plots ---
+    plots()

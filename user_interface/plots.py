@@ -1,13 +1,18 @@
 import streamlit as st
 
-import plotly.express as px
 import plotly.graph_objects as po
 from plotly.subplots import make_subplots
 
-import pandas as pd
-
-import dbConnectionModule as db
-from main import SENSOR_TYPES
+SENSOR_TYPES = {
+    "bar": "Pressure",
+    "barg": "Pressure",
+    "C": "Temperature",
+    "N": "Force",
+    "kg": "Mass",
+    "g/s": "Massflow",
+    "l/s": "Volumeflow",
+    "s": "Time"
+}
 
 def plot(data, key):
     fig = make_subplots(specs=[[{"secondary_y" : True}]], x_title='Time [s]')
@@ -59,14 +64,14 @@ def plot(data, key):
 )
     st.plotly_chart(fig, use_container_width=True, key=key)
 
-# === Create 1st Plot ===
+# === Create Content ===
+def show_plots():
+    col1, col2 = st.columns(2)
 
-col1, col2 = st.columns(2)
+    with col1:
+        plot(st.session_state.plotOne, 'one')
+        plot(st.session_state.plotThree, 'three')
 
-with col1:
-    plot(st.session_state.plotOne, 'one')
-    plot(st.session_state.plotThree, 'three')
-
-with col2:
-    plot(st.session_state.plotTwo, 'two')
-    plot(st.session_state.plotFour, 'four')
+    with col2:
+        plot(st.session_state.plotTwo, 'two')
+        plot(st.session_state.plotFour, 'four')
