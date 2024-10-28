@@ -3,4 +3,4 @@ pandas
 plotly
 mysql-connector-python
 streamlit_option_menu
-scipy.signal.windows
+scipy
