@@ -12,6 +12,7 @@ connection_config = {
 }
 
 
+
 def test():
     st.write('test')
 
@@ -127,7 +128,7 @@ def update_selected_plot(key):
 def update_selected_sensor(**kwargs):
     sensor_id = kwargs['id']
 
-    if not st.session_state[sensor_id] and sensor_id in st.session_state.selected_plot:
+    if not st.session_state[sensor_id] and f"{sensor_id}" in st.session_state.selected_plot:
         del st.session_state.selected_plot[f"{sensor_id}"]
         return
     
