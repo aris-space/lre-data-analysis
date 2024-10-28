@@ -5,10 +5,10 @@ from io import StringIO
 from datetime import timedelta
 
 connection_config = {
-    "host": "aris-helios.vsos.ethz.ch",
-    "user": "aris-read-only-user",
-    "password": "y9FkMVTr_TU_36_dr3DvPwWwFq_atM",
-    "database": "aris",
+    "host": st.secrets["DB_HOST"],
+    "user": st.secrets["DB_USER"],
+    "password": st.secrets["DB_PASSWORD"],
+    "database": st.secrets["DB_NAME"],
 }
 
 def test():
