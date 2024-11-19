@@ -2,10 +2,24 @@
 # ---------------------------------------------------------------------------------------------------
 import streamlit as st
 from streamlit_option_menu import option_menu
+import pandas as pd
+from io import StringIO
 
 import dbConnectionModule as db
 from user_interface.plots import show_plots as plots
 
+def plot_select():
+    with st.sidebar:
+        option_menu(None, options=["Plot 1", "Plot 2", "Plot 3", "Plot 4"], 
+            icons=['plus-circle', 'plus-circle', 'plus-circle', 'plus-circle'], 
+            menu_icon="cast", default_index=0, orientation="horizontal",
+            styles={
+                "container": {"padding": "0!important"},
+                "icon": {"font-size": "15px"}, 
+                "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px"}
+            },
+            key="plot_select", on_change=db.update_selected_plot)
+        
 def sensor_panel():
     config_options = db.get_config_ids_with_dates()
 
@@ -47,16 +61,36 @@ def sensor_panel():
                               key=id,
                               on_change=db.update_selected_sensor, kwargs={'id': id})
 
-    with st.sidebar:
-        option_menu(None, options=["Plot 1", "Plot 2", "Plot 3", "Plot 4"], 
-            icons=['plus-circle', 'plus-circle', 'plus-circle', 'plus-circle'], 
-            menu_icon="cast", default_index=0, orientation="horizontal",
-            styles={
-                "container": {"padding": "0!important"},
-                "icon": {"font-size": "15px"}, 
-                "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px"}
-            },
-            key="plot_select", on_change=db.update_selected_plot)
+def upload_panel():
+    uploaded_file = st.sidebar.file_uploader("Upload a .csv file", type=["csv"])
+    if uploaded_file is not None:
+        # Can be used wherever a "file-like" object is accepted:
+        df = pd.read_csv(uploaded_file, comment='#')
+        sensorIndex = df[(df['_measurement'] == 'actuator_commands')].index
+        df = df.drop(sensorIndex)
+        st.session_state["csv_data"] = df
+
+        unique_ids = df['id'].unique()
+
+        sensor_col1, sensor_ccol2, sensor_ccol3 = st.sidebar.columns(3)
+        nr_sensors = len(unique_ids)
+        for i in range(0, nr_sensors, 3):
+            id = unique_ids[i]
+            sensor_col1.checkbox(label=id, 
+                                key=id,
+                                on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+
+            if i + 1 >= nr_sensors: break
+            id = unique_ids[i + 1]
+            sensor_ccol2.checkbox(label=id,
+                                key=id,
+                                on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+
+            if i + 2 >= nr_sensors: break
+            id = unique_ids[i + 2]
+            sensor_ccol3.checkbox(label=id,
+                              key=id,
+                              on_change=db.update_selected_sensor_csv, kwargs={'id': id})
 
 def generate():
     # === Sidebar ===
@@ -69,6 +103,10 @@ def generate():
     st.sidebar.divider()
 
     # --- Controls ---
+
+    plot_select()
+
+    st.sidebar.divider()
 
     sensor_panel()
 
@@ -83,6 +121,11 @@ def generate():
     # st.sidebar.divider()
 
     # coefficient_panel()
+
+    # TODO: add upload panel
+
+    st.sidebar.divider()
+    upload_panel()
 
     # === Content ===
     # --- Plots ---

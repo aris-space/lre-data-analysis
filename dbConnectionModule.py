@@ -92,11 +92,11 @@ def get_sensor_unit(sensor_id):
 
 # Function to Calculate Moving Average, change window if  you want to adapt how many values should be taken in the moving average
 @st.cache_data
-def moving_average(df, window=30):
-    df["value_ma"] = df["value"].rolling(window=window, center=True, win_type='gaussian').mean(std=window)
+def moving_average(df, column="value", window=30):
+    df["value_ma"] = df[column].rolling(window=window, center=True, win_type='gaussian').mean(std=window)
     # df["value_ma_std"] = df["value"].rolling(window=window).mean()
-    df["value_ma"] = df["value_ma"].fillna(df["value"])
-    return df.drop(columns='value')
+    df["value_ma"] = df["value_ma"].fillna(df[column])
+    return df.drop(columns=column)
 
 def update_available_sensors():
     st.session_state.selected_config_id = st.session_state["config_select"].split(" - ")[0]
@@ -128,11 +128,32 @@ def update_selected_plot(key):
 def update_selected_sensor(**kwargs):
     sensor_id = kwargs['id']
 
-    if not st.session_state[sensor_id] and f"{sensor_id}" in st.session_state.selected_plot:
-        del st.session_state.selected_plot[f"{sensor_id}"]
+    if not st.session_state[sensor_id]:
+        if f"{sensor_id}" in st.session_state.selected_plot: 
+            del st.session_state.selected_plot[f"{sensor_id}"]
         return
     
     st.session_state.selected_plot[f"{sensor_id}"] = get_sensor_data(sensor_id)
+
+def update_selected_sensor_csv(**kwargs):
+    sensor_id = kwargs['id']
+
+    if not st.session_state[sensor_id]:
+        if f"{sensor_id}" in st.session_state.selected_plot: 
+            del st.session_state.selected_plot[f"{sensor_id}"]
+        return
+    df = st.session_state["csv_data"]
+    sensor_data = moving_average(df[df['id'] == sensor_id], column="_value")[["_time", "value_ma"]]
+
+    if not df.empty:
+        # Normalize timestamps and convert to seconds
+        sensor_data["_time"] = (pd.to_datetime(sensor_data["_time"], format="%Y-%m-%dT%H:%M:%SZ") - pd.to_datetime(sensor_data["_time"].min(), format="%Y-%m-%dT%H:%M:%SZ")) / timedelta(seconds=1)
+    
+    sensor_data.rename(columns={"_time": "timestamp"}, inplace=True)
+    sensor_data.set_index("timestamp", inplace=True)
+    sensor_data.sort_index(inplace=True)
+
+    st.session_state.selected_plot[f"{sensor_id}"] = {'name': sensor_id, 'unit': '-', 'data': sensor_data}
 
 # Function to convert dataframe into csv file so that data can be downloaded
 # ATTENTION: atm we don't really use this option yet, we don't have the option implemented to download stuff, but i'm planning to implement this again

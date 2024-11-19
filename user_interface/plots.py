@@ -11,7 +11,8 @@ SENSOR_TYPES = {
     "kg": "Mass",
     "g/s": "Massflow",
     "l/s": "Volumeflow",
-    "s": "Time"
+    "s": "Time",
+    "-": "No Unit"
 }
 
 def plot(data, key):
@@ -65,7 +66,7 @@ def plot(data, key):
     st.plotly_chart(fig, use_container_width=True, key=key)
 
 # === Create Content ===
-def show_plots():
+def show_plots():    
     col1, col2 = st.columns(2)
 
     with col1:
