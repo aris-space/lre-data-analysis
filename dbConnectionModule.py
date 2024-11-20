@@ -13,6 +13,8 @@ connection_config = {
 
 
 
+
+
 def test():
     st.write('test')
 
@@ -147,7 +149,8 @@ def update_selected_sensor_csv(**kwargs):
 
     if not df.empty:
         # Normalize timestamps and convert to seconds
-        sensor_data["_time"] = (pd.to_datetime(sensor_data["_time"], format="%Y-%m-%dT%H:%M:%SZ") - pd.to_datetime(sensor_data["_time"].min(), format="%Y-%m-%dT%H:%M:%SZ")) / timedelta(seconds=1)
+
+        sensor_data["_time"] = (pd.to_datetime(sensor_data["_time"], errors='coerce', format="%Y-%m-%dT%H:%M:%SZ") - pd.to_datetime(sensor_data["_time"].min(), errors='coerce', format="%Y-%m-%dT%H:%M:%SZ")) / timedelta(seconds=1)
     
     sensor_data.rename(columns={"_time": "timestamp"}, inplace=True)
     sensor_data.set_index("timestamp", inplace=True)
