@@ -66,8 +66,6 @@ def upload_panel():
     if uploaded_file is not None:
         # Can be used wherever a "file-like" object is accepted:
         df = pd.read_csv(uploaded_file, comment='#')
-        sensorIndex = df[(df['_measurement'] == 'actuator_commands')].index
-        df = df.drop(sensorIndex)
         st.session_state["csv_data"] = df
 
         unique_ids = df['id'].unique()

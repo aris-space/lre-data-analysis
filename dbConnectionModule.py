@@ -11,6 +11,7 @@ connection_config = {
     "database": st.secrets["DB_NAME"],
 }
 
+
 def test():
     st.write('test')
 
@@ -141,14 +142,14 @@ def update_selected_sensor_csv(**kwargs):
             del st.session_state.selected_plot[f"{sensor_id}"]
         return
     df = st.session_state["csv_data"]
-    sensor_data = moving_average(df[df['id'] == sensor_id], column="_value")[["_time", "value_ma"]]
+    sensor_data = moving_average(df[df['id'] == sensor_id])[["timestamp", "value_ma"]]
 
     if not df.empty:
         # Normalize timestamps and convert to seconds (format="%Y-%m-%dT%H:%M:%SZ")
 
-        sensor_data["_time"] = (pd.to_datetime(sensor_data["_time"], format='mixed') - pd.to_datetime(sensor_data["_time"].min(), format='mixed')) / timedelta(seconds=1)
+        sensor_data["timestamp"] = (pd.to_datetime(sensor_data["timestamp"], format='mixed') - pd.to_datetime(sensor_data["timestamp"].min(), format='mixed')) / timedelta(seconds=1)
     
-    sensor_data.rename(columns={"_time": "timestamp"}, inplace=True)
+    # sensor_data.rename(columns={"_time": "timestamp"}, inplace=True)
     sensor_data.set_index("timestamp", inplace=True)
     sensor_data.sort_index(inplace=True)
 
