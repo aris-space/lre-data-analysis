@@ -13,7 +13,6 @@ connection_config = {
 
 
 
-
 def test():
     st.write('test')
 
@@ -79,7 +78,8 @@ def get_sensor_values(sensor_id):
 
     if not df.empty:
         # Normalize timestamps and convert to seconds
-        df["timestamp"] = (pd.to_datetime(df["timestamp"], unit="s") - pd.to_datetime(df["timestamp"].min(), unit="s")) / timedelta(seconds=1)
+        # df["timestamp"] = (pd.to_datetime(df["timestamp"], unit="s") - pd.to_datetime(df["timestamp"].min(), unit="s")) / timedelta(seconds=1)
+        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")
     return df.set_index('timestamp').sort_index()
 
 # Function to fetch sensor units for a specific sensor_id as a string
