@@ -92,9 +92,9 @@ def get_sensor_unit(sensor_id):
 # Function to Calculate Moving Average, change window if  you want to adapt how many values should be taken in the moving average
 @st.cache_data
 def moving_average(df, column="value", window=30):
-    df["value_ma"] = df[column].rolling(window=window, center=True, win_type='gaussian').mean(std=window)
+    # df["value_ma"] = df[column].rolling(window=window, center=True, win_type='gaussian').mean(std=window)
     # df["value_ma_std"] = df["value"].rolling(window=window).mean()
-    df["value_ma"] = df["value_ma"].fillna(df[column])
+    # df["value_ma"] = df["value_ma"].fillna(df[column])
     return df.drop(columns=column)
 
 def update_available_sensors():

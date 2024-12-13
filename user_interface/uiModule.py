@@ -63,32 +63,34 @@ def sensor_panel():
 
 def upload_panel():
     uploaded_file = st.sidebar.file_uploader("Upload a .csv file", type=["csv"])
-    if uploaded_file is not None:
-        # Can be used wherever a "file-like" object is accepted:
-        df = pd.read_csv(uploaded_file, comment='#')
-        st.session_state["csv_data"] = df
 
-        unique_ids = df['id'].unique()
+    if uploaded_file is None: return
 
-        sensor_col1, sensor_ccol2, sensor_ccol3 = st.sidebar.columns(3)
-        nr_sensors = len(unique_ids)
-        for i in range(0, nr_sensors, 3):
-            id = unique_ids[i]
-            sensor_col1.checkbox(label=id, 
-                                key=id,
-                                on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+    # Can be used wherever a "file-like" object is accepted:
+    df = pd.read_csv(uploaded_file, comment='#')
+    st.session_state["csv_data"] = df
 
-            if i + 1 >= nr_sensors: break
-            id = unique_ids[i + 1]
-            sensor_ccol2.checkbox(label=id,
-                                key=id,
-                                on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+    unique_ids = df['id'].unique()
 
-            if i + 2 >= nr_sensors: break
-            id = unique_ids[i + 2]
-            sensor_ccol3.checkbox(label=id,
-                              key=id,
-                              on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+    sensor_col1, sensor_ccol2, sensor_ccol3 = st.sidebar.columns(3)
+    nr_sensors = len(unique_ids)
+    for i in range(0, nr_sensors, 3):
+        id = unique_ids[i]
+        sensor_col1.checkbox(label=id, 
+                            key=id,
+                            on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+
+        if i + 1 >= nr_sensors: break
+        id = unique_ids[i + 1]
+        sensor_ccol2.checkbox(label=id,
+                            key=id,
+                            on_change=db.update_selected_sensor_csv, kwargs={'id': id})
+
+        if i + 2 >= nr_sensors: break
+        id = unique_ids[i + 2]
+        sensor_ccol3.checkbox(label=id,
+                            key=id,
+                            on_change=db.update_selected_sensor_csv, kwargs={'id': id})
 
 def generate():
     # === Sidebar ===
