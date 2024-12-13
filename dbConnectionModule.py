@@ -4,14 +4,19 @@ from mysql.connector import connect, Error
 from io import StringIO
 from datetime import timedelta
 
+# connection_config = {
+#     "host": st.secrets["DB_HOST"],
+#     "user": st.secrets["DB_USER"],
+#     "password": st.secrets["DB_PASSWORD"],
+#     "database": st.secrets["DB_NAME"],
+# }
+
 connection_config = {
-    "host": st.secrets["DB_HOST"],
-    "user": st.secrets["DB_USER"],
-    "password": st.secrets["DB_PASSWORD"],
-    "database": st.secrets["DB_NAME"],
+    "host": "aris-helios.vsos.ethz.ch",
+    "user": "aris-read-only-user",
+    "password": "y9FkMVTr_TU_36_dr3DvPwWwFq_atM",
+    "database": "aris",
 }
-
-
 
 def test():
     st.write('test')
@@ -150,7 +155,9 @@ def update_selected_sensor_csv(**kwargs):
     if not df.empty:
         # Normalize timestamps and convert to seconds (format="%Y-%m-%dT%H:%M:%SZ")
 
-        sensor_data["timestamp"] = (pd.to_datetime(sensor_data["timestamp"], format='mixed') - pd.to_datetime(sensor_data["timestamp"].min(), format='mixed')) / timedelta(seconds=1)
+        # sensor_data["timestamp"] = (pd.to_datetime(sensor_data["timestamp"], format='mixed') - pd.to_datetime(sensor_data["timestamp"].min(), format='mixed')) / timedelta(seconds=1)
+        sensor_data["timestamp"] = pd.to_datetime(sensor_data["timestamp"], format='mixed')
+
     
     # sensor_data.rename(columns={"_time": "timestamp"}, inplace=True)
     sensor_data.set_index("timestamp", inplace=True)
